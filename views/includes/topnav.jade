@@ -11,16 +11,20 @@
     #navbar.collapse.navbar-collapse
       ul.nav.navbar-nav
         li
-          a(href='/todos') Todo List
-        li
-          a(href='/users') Users
+          a(href='/rooms/lists') Room List
       ul.nav.navbar-nav.navbar-right
         if (currentUser) 
+          li
+            a(href='/users/#{currentUser._id}/index') Users
+          li
+            a(href='/rooms/#{currentUser._id}/new') Hosting
           li
             a(href='/users/#{currentUser._id}') Profile
           li
             a(href='/signout') Signout
         else
+          li
+            a(href='/rooms/new') Hosting
           li
             a(href='/signin') Signin
           li

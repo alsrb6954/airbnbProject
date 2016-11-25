@@ -5,22 +5,27 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var methodOverride = require('method-override');
 var flash = require('connect-flash');
 var mongoose   = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var rooms = require('./routes/rooms');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
 if (app.get('env') === 'development') {
   app.locals.pretty = true;
 }
 app.locals.moment = require('moment');
+
+// mongodb connect
+mongoose.connect('mongodb://minkyu:rb635210@ds031607.mlab.com:31607/minkyu');
+mongoose.connection.on('error', console.log);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -28,7 +33,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method', {methods: ['POST', 'GET']}));
 
 app.use(session({
   resave: true,
@@ -36,11 +41,19 @@ app.use(session({
   secret: 'long-long-long-secret-string-1313513tefgwdsvbjkvasd'
 }));
 app.use(flash());
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components',  express.static(path.join(__dirname, '/bower_components')));
 
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.session.user;
+  res.locals.flashMessages = req.flash();
+  next();
+});
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/rooms', rooms);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -48,10 +61,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
-// mongodb connect
-mongoose.connect('mongodb://user:asdasd@ds041394.mongolab.com:41394/nodewp');
-mongoose.connection.on('error', console.log);
 
 // error handlers
 

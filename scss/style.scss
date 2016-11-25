@@ -9,27 +9,6 @@ body {
 a {
   color: #00B7FF
 }
-
-.jumbotron {
-  margin-top: -1em;
-  background: url('/images/bg.jpg') no-repeat left top;
-  -webkit-background-size: 100%;
-  -moz-background-size: 100%;
-  -o-background-size: 100%;
-  background-size: 100%;
-  min-height: 20em;
-  color: #fff;
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.form-actions {
-  padding: 19px 20px 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  background-color: #f5f5f5;
-  border-top: 1px solid #e5e5e5;
-}
-
 .footer {
   margin-top: 1em;
   width: 100%;
@@ -45,4 +24,23 @@ a {
       color: #bbb;
     }
   }
+}
+.tit{
+    margin-top: 3em; 
+    margin-left: 2em;
+}
+.con{
+   margin-left: 10em; 
+}
+
+.jumbotron {
+  margin-top: -1em;
+  background: url('/images/유럽 (5).JPG') no-repeat left top;
+  -webkit-background-size: 100%;
+  -moz-background-size: 100%;
+  -o-background-size: 100%;
+  background-size: 100%;
+  min-height: 50em;
+  color: #fff;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 }

@@ -1,0 +1,28 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header 숙소 등록
+
+    form(action = "/rooms", method='POST')
+      .form-group
+        label(for='email') Email address
+        input.form-control(type='email', id='email', name='email', placeholder='Email', value=user.email)
+      .form-group
+        label(for='personner') 인원수(최대)
+        input.form-control(type='personner', id='personner', name='personner', placeholder='personner')
+        label(for='city') 도시
+        input.form-control(type='text', id='city', name='city', placeholder='city')
+        label(for='rate') 비용(1박)
+        input.form-control(type='text', id='rate', name='rate', placeholder='rate')        
+      .form-group
+        label(for='title') 방이름
+        input.form-control(type='text', id='title', name='title', placeholder='title')
+      .form-group      
+        label(for='content') 내용(편의시설)
+        textarea.form-control(id='content', rows='10', name='content', placeholder='content here')
+
+      div.form-actions
+        a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
+        | 
+        button.btn.btn-primary(type='submit') 완료

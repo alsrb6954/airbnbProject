@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header= room.title 
+    p
+      b by #{room.email}
+      | 
+      span at #{moment(room.createdAt).format('YYYY-MM-DD HH:mm:ss')} 
+      | 
+      | (조회수 #{room.read})
+    p.well(style='white-space:pre;')= room.content
+    
+    a.btn.btn-default(href='/rooms/lists') 목록
+    a.btn.btn-default(href='/rooms/lists') 예약하기
