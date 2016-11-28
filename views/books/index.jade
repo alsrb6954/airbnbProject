@@ -1,0 +1,59 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header 예약 하기
+    form(action='/books/#{room.id}', method='POST')
+      .form-group
+        label(for='name') Name(예약자)
+        input.form-control(type='text', id='name', name='name', placeholder='Your name', value=user.name)
+      .form-group
+        label(for='bookEmail') Email address(예약자)
+        input.form-control(type='bookEmail', id='bookEmail', name='bookEmail', placeholder='bookEmail', value=user.email)
+      .form-group
+        label(for='hostEmail') Email address(호스트)
+        input.form-control(type='hostEmail', id='hostEmail', name='hostEmail', placeholder='hostEmail', value=room.email)
+      .form-group
+        label(for='personner') 인원(최대)
+        input.form-control(type='personner', id='personner', name='personner', placeholder=room.personner)
+      .form-group
+        label(for='Date') 예약 날짜 
+        input(type='text', id='fromDate', name='fromDate', placeholder='check in')
+        span ~
+        input(type='text', id='toDate', name='toDate', placeholder='check out')
+      //-  .form-group
+      //-   label(for='rate') 가격
+      //-   input.form-control(type='rate', id='rate', name='rate', value=(room.rate * num))
+      .div.form-actions
+        a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
+        | 
+        button.btn.btn-primary(type='submit') 신청하기
+
+
+  script(type='text/javascript').
+    $( function() {
+    var dateFormat = "mm/dd/yy",
+      from = $( "#fromDate" )
+        .datepicker({
+          changeMonth: true,
+        })
+        .on( "change", function() {
+          to.datepicker( "option", "minDate", getDate( this ) );
+        }),
+      to = $( "#toDate" ).datepicker({
+        changeMonth: true,
+        maxDate:"+1M"
+      })
+      .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+      });
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+      return date;
+      }
+    });

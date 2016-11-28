@@ -12,10 +12,10 @@ block content
           img.img-circle(src='#{user.facebook.photo}')
     hr
     p
-      a.btn.btn-default(href='/users/show/#{user._id}/index') 예약 목록
+      a.btn.btn-default(href='/books/#{user._id}/managementBook') 예약 목록
       | 
-      a.btn.btn-default(href='/users/show/#{user._id}/index') 방 목록
+      a.btn.btn-default(href='/books/#{user._id}/managementHost') 방 목록
       | 
       a.btn.btn-default(href='/users/#{user._id}/edit') 수정
       | 
-      a.btn.btn-default(href='/users/show/#{user._id}?_method=DELETE') 삭제
+      a.btn.btn-default(href='/users/show/#{user._id}?_method=DELETE') 회원탈퇴

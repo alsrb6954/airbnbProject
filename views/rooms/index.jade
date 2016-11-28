@@ -24,7 +24,8 @@ block content
               a(href='/rooms/#{room.id}')= room.title
             td= room.personner
             td= room.rate
-            td= room.reservation
+            td 
+              span= room.reservation
             td= moment(room.createdAt).format('YYYY-MM-DD HH:mm:ss')
             td= room.read
             td
@@ -35,7 +36,7 @@ block content
                   a.btn.btn-xs.btn-default(data-id=room.id, class='delete') 삭제
                 else
     if (currentUser)
-      a.btn.btn-primary(href='/rooms/#{currentUser.id}/new') 글쓰기
+      a.btn.btn-primary(href='/rooms/#{currentUser.id}/new') 숙소 등록하기
     else
 
     //- //- 아래의 Pagination 부분은 만들 수 있다면 추가 점수 부여합니다. 
