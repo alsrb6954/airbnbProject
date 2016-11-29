@@ -11,22 +11,22 @@
     #navbar.collapse.navbar-collapse
       ul.nav.navbar-nav
         li
-          a(href='/rooms/lists') Room List
+          a(href='/rooms/lists') 방 목록
       ul.nav.navbar-nav.navbar-right
         if (currentUser) 
           li
-            a(href='/users/#{currentUser._id}/index') Users
+            a(href='/users/#{currentUser._id}/index') 사용자 관리
           li
-            a(href='/rooms/#{currentUser._id}/new') Hosting
+            a(href='/rooms/#{currentUser._id}/new') 호스팅하기
           li
             a(href='/users/#{currentUser._id}') Profile
           li
-            a(href='/signout') Signout
+            a(href='/signout') 로그아웃
         else
           li
-            a(href='/rooms/new') Hosting
+            a(href='/rooms/new') 호스팅하기
           li
-            a(href='/signin') Signin
+            a(href='/signin') 로그인
           li
-            a(href='/users/new') Signup
+            a(href='/users/new') 회원가입
           
