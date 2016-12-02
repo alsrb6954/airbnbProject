@@ -16,11 +16,14 @@ block content
       .form-group
         label(for='personner') 인원(최대)
         input.form-control(type='personner', id='personner', name='personner', placeholder=room.personner)
+        br
       .form-group
         label(for='Date') 예약 날짜 
         input(type='text', id='fromDate', name='fromDate', placeholder='check in')
         span ~
         input(type='text', id='toDate', name='toDate', placeholder='check out')
+        br
+        br
       //-  .form-group
       //-   label(for='rate') 가격
       //-   input.form-control(type='rate', id='rate', name='rate', value=(room.rate * num))

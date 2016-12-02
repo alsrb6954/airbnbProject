@@ -20,7 +20,7 @@ block content
         each room in rooms
           if (room.reservation == "예약가능")
             tr
-              td= room.city
+              td= room.address
               td
                 a(href='/rooms/#{room.id}')= room.title
               td= room.personner
@@ -43,26 +43,27 @@ block content
               th 숙소 인원(최대)
               th 가격(1박)
               th 예약상태
-              th 등록시간
+              th 예약신청자
               th 조회수
               th 
           tbody
             each room in rooms
               if (room.reservation == "예약진행중")
                 tr
-                  td= room.city
+                  td= room.address
                   td
                     a(href='/rooms/#{room.id}')= room.title
                   td= room.personner
                   td= room.rate
                   td 
                     span= room.reservation
-                  td= moment(room.createdAt).format('YYYY-MM-DD HH:mm:ss')
+                  td
+                    a.btn.btn-xs.btn-default(href='/books/#{room.id}/show') 상세보기
                   td= room.read
                   td
-                    a.btn.btn-xs.btn-default(href='/rooms/#{room.id}/edit') 수락하기
+                    a.btn.btn-xs.btn-default(href='/books/#{room.id}/accept?_method=PUT') 수락하기
                     | 
-                    a.btn.btn-xs.btn-default(data-id=room.id, class='delete') 거절하기
+                    a.btn.btn-xs.btn-default(href='/books/#{room.id}/refuse?_method=PUT') 거절하기
           
     h2.page-header 예약완료
     table.table.table-bordered
@@ -80,7 +81,7 @@ block content
             each room in rooms
               if (room.reservation == "예약완료")
                 tr
-                  td= room.city
+                  td= room.address
                   td
                     a(href='/rooms/#{room.id}')= room.title
                   td= room.personner
@@ -90,7 +91,5 @@ block content
                   td= moment(room.createdAt).format('YYYY-MM-DD HH:mm:ss')
                   td= room.read
                   td
-                    a.btn.btn-xs.btn-default(href='/rooms/#{room.id}/edit') 수정
-                    | 
-                    a.btn.btn-xs.btn-default(data-id=room.id, class='delete') 삭제
+                    a.btn.btn-xs.btn-default(href='/books/#{room.id}/refuse?_method=PUT') 취소하기
   

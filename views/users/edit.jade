@@ -19,7 +19,17 @@ block content
       .form-group
         label(for='password_confirmation') Password 확인
         input.form-control(type='password', id='password_confirmation', name='password_confirmation', placeholder='변경할 Password 확인')
+      .form-group
+        label(for='address') 주소
+        input(type="text",id="postcode", placeholder="우편번호", name='postcode', value=user.postcode)
+        input(type="button",onclick="execDaumPostcode()", value="우편번호 찾기")
+        br
+        input.form-control(type="text", id="address", placeholder="주소", name='address', value=user.address)
+        input.form-control(type="text", id="address2", placeholder="상세주소", name='address2', value=user.address2)
       div.form-actions
         a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
         | 
         button.btn.btn-primary(type='submit') 수정
+
+
+  script(type='text/javascript', src='/javascripts/address.js') 

@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header 신청내역서
+    .form-group
+        label Name(예약자): #{book.name}
+    .form-group
+        label Email(예약자): 
+            a(href='/books/#{book.id}/profile')=book.bookEmail        
+    .form-group
+        label 인원수: #{book.personner} / #{room.personner}
+    .form-group
+        label 사는 곳: #{book.address}
+    .form-group
+        label 숙박기간: #{moment(book.fromDate).format('YYYY-MM-DD')} ~ #{moment(book.toDate).format('YYYY-MM-DD')}   
+    .form-group
+        label 비용

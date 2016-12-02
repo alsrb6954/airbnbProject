@@ -4,12 +4,18 @@ block content
   .container
     h1.page-header= room.title 
     p
-      b by #{room.email}
-      | 
-      span at #{moment(room.createdAt).format('YYYY-MM-DD HH:mm:ss')} 
+      b 호스트: 
+        a(href='/users/#{room._id}')=room.email
       | 
       | (조회수 #{room.read})
+    ul
+      li 이용 인원(최대): #{room.personner}명
+      li 금액(1박): #{room.rate}원
+      li 주소: #{room.address} #{room.address2}
+    h3.Thumbnail 편의시설
     p.well(style='white-space:pre;')= room.content
+    h3.Thumbnail 이용 규칙
+    p.well(style='white-space:pre;')= room.content2
     
     a.btn.btn-default(href='/rooms/lists') 목록
     a.btn.btn-default(href='/books/#{room._id}/') 예약하기

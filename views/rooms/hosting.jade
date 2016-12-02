@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header Hosting
+    .row
+      .col-sm-6.col-md-4
+        .thumbnail
+          img(src='/images/hosting1.PNG')
+          .caption
+            h3.Thumbnail 개인실
+            p 5인 이하의 손님들을 맞이할 수 있는 방의 크기를 가지고 있을 때 등록해주세요
+            p 
+              a.btn.btn-primary(href="/rooms/#{currentUser._id}/new1", role="button") 숙소 등록
+       .col-sm-6.col-md-4
+        .thumbnail
+          img(src='/images/hosting2.PNG')
+          .caption
+            h3.Thumbnail 다인실
+            p 12인 이하의 손님들을 맞이할 수 있는 방의 크기를 가지고 있을 때 등록해주세요
+            p 
+              a.btn.btn-primary(href="/rooms/#{currentUser._id}/new2" role="button") 숙소 등록
+       .col-sm-6.col-md-4
+        .thumbnail
+          img(src='/images/hosting3.PNG')
+          .caption
+            h3.Thumbnail 집 전체
+            p 많은 손님들을 한번에 받을 수 있게 집 전체를 호스팅 할 때 등록해주세요
+            p 
+              a.btn.btn-primary(href="/rooms/#{currentUser._id}/new3" role="button") 숙소 등록    
+
+    h1.page-header Hosting                 
+   

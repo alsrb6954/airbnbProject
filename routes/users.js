@@ -2,15 +2,6 @@ var express = require('express'),
     User = require('../models/User');
 var router = express.Router();
 
-function needAuth(req, res, next) {
-    if (req.session.user) {
-      next();
-    } else {
-      req.flash('danger', '로그인이 필요합니다.');
-      res.redirect('/signin');
-    }
-}
-
 function validateForm(form, options) {
   var name = form.name || "";
   var email = form.email || "";
@@ -41,7 +32,7 @@ function validateForm(form, options) {
 }
 
 /* GET users listing. */
-router.get('/:id/index', needAuth, function(req, res, next) {
+router.get('/:id/index', function(req, res, next) {
   User.find({}, function(err, users) {
     if (err) {
       return next(err);
@@ -59,7 +50,7 @@ router.get('/:id/index', needAuth, function(req, res, next) {
     });
   });
 });
-router.get('/', needAuth, function(req, res, next) {
+router.get('/', function(req, res, next) {
   User.find({}, function(err, users) {
     if (err) {
       return next(err);
@@ -91,47 +82,11 @@ router.put('/:id/auth/', function(req,res,next){
         return next(err);
       }
       req.flash('success', '사용자 권한이 변경되었습니다.');
-      res.redirect('/');
+      res.redirect('back');
     });
   });
 });
 
-router.put('/:id', function(req, res, next) {
-  var err = validateForm(req.body);
-  if (err) {
-    req.flash('danger', err);
-    return res.redirect('back');
-  }
-
-  User.findById({_id: req.params.id}, function(err, user) {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      req.flash('danger', '존재하지 않는 사용자입니다.');
-      return res.redirect('back');
-    }
-
-    if (user.password !== req.body.current_password) {
-      req.flash('danger', '현재 비밀번호가 일치하지 않습니다.');
-      return res.redirect('back');
-    }
-
-    user.name = req.body.name;
-    user.email = req.body.email;
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
-
-    user.save(function(err) {
-      if (err) {
-        return next(err);
-      }
-      req.flash('success', '사용자 정보가 변경되었습니다.');
-      res.redirect('/');
-    });
-  });
-});
 
 router.delete('/:id', function(req, res, next) {
   User.findOneAndRemove({_id: req.params.id}, function(err) {
@@ -178,16 +133,18 @@ router.put('/:id', function(req, res, next) {
       req.flash('danger', '존재하지 않는 사용자입니다.');
       return res.redirect('back');
     }
-
-    if (user.password !== req.body.current_password) {
+    if (!user.validatePassword(req.body.current_password)) {
       req.flash('danger', '현재 비밀번호가 일치하지 않습니다.');
       return res.redirect('back');
     }
 
     user.name = req.body.name;
     user.email = req.body.email;
+    address = req.body.address;
+    address2 = req.body.address2;
+    postcode = req.body.postcode;
     if (req.body.password) {
-      user.password = req.body.password;
+      user.password = user.generateHash(req.body.password);
     }
 
     user.save(function(err) {
@@ -217,9 +174,12 @@ router.post('/', function(req, res, next) {
     var newUser = new User({
       name: req.body.name,
       email: req.body.email,
+      address: req.body.address,
+      address2: req.body.address2,
+      postcode: req.body.postcode,
       authority: "off",
     });
-    newUser.password = req.body.password;
+    newUser.password = newUser.generateHash(req.body.password);
 
     newUser.save(function(err) {
       if (err) {

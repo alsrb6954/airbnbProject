@@ -9,7 +9,7 @@ body {
 a {
   color: #00B7FF
 }
-td > span {
+p > span {
   color:  red
 }
 .footer {
@@ -32,18 +32,4 @@ td > span {
     margin-top: 3em; 
     margin-left: 2em;
 }
-.con{
-   margin-left: 10em; 
-}
 
-.jumbotron {
-  margin-top: -1em;
-  background: url('/images/유럽 (5).JPG') no-repeat left top;
-  -webkit-background-size: 100%;
-  -moz-background-size: 100%;
-  -o-background-size: 100%;
-  background-size: 100%;
-  min-height: 50em;
-  color: #fff;
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-}

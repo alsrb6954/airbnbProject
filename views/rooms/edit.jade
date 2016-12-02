@@ -11,18 +11,29 @@ block content
       .form-group
         label(for='personner') 인원수(최대)
         input.form-control(type='personner', id='personner', name='personner', placeholder='personner', value=user.personner)
-        label(for='city') 도시
-        input.form-control(type='text', id='city', name='city', placeholder='city', value=user.city)
         label(for='rate') 비용(1박)
         input.form-control(type='text', id='rate', name='rate', placeholder='rate', value=user.rate)        
       .form-group
         label(for='title') 방이름
         input.form-control(type='text', id='title', name='title', placeholder='title', value=user.title)
+      .form-group
+        label(for='address') 주소
+        input(type="text", id="postcode", placeholder="우편번호", name='postcode', value=user.postcode)
+        input(type="button", onclick="execDaumPostcode()", value="우편번호 찾기")
+        br
+        input.form-control(type="text", id="address", placeholder="주소", name='address', value=user.address)
+        input.form-control(type="text", id="address2", placeholder="상세주소", name='address2', value=user.address2)
       .form-group      
         label(for='content') 내용(편의시설)
         textarea.form-control(id='content', rows='10', name='content', placeholder='content here')= user.content
+      .form-group      
+        label(for='content2') 이용규칙
+        textarea.form-control(id='content2', rows='5', name='content2', placeholder='content here')= user.content2        
 
       div.form-actions
         a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
         | 
         button.btn.btn-primary(type='submit') 완료
+
+
+  script(type='text/javascript', src='/javascripts/address.js') 
