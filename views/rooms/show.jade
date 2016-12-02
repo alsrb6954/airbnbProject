@@ -2,20 +2,59 @@ extends ../layout
 
 block content
   .container
-    h1.page-header= room.title 
-    p
-      b 호스트: 
-        a(href='/users/#{room._id}')=room.email
-      | 
-      | (조회수 #{room.read})
-    ul
-      li 이용 인원(최대): #{room.personner}명
-      li 금액(1박): #{room.rate}원
-      li 주소: #{room.address} #{room.address2}
-    h3.Thumbnail 편의시설
-    p.well(style='white-space:pre;')= room.content
-    h3.Thumbnail 이용 규칙
-    p.well(style='white-space:pre;')= room.content2
-    
+    h1.page-header= room.title
+    .row
+      .col-md-6 
+        p
+          b 호스트: 
+            a(href='/rooms/#{room._id}/profile')=room.email
+          | 
+          | (조회수 #{room.read})
+        ul
+          li 이용 인원(최대): #{room.personner}명
+          li 금액(1박): #{room.rate}원
+          li 주소: #{room.address} #{room.address2}
+        h3.Thumbnail 편의시설
+        p.well(style='white-space:pre;')= room.content
+        h3.Thumbnail 이용 규칙
+        p.well(style='white-space:pre;')= room.content2
+      .col-md-6 
+        div(id="map" style="width:100%;height:350px;")
     a.btn.btn-default(href='/rooms/lists') 목록
     a.btn.btn-default(href='/books/#{room._id}/') 예약하기
+
+
+    script(type='text/javascript').
+      var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+      mapOption = {
+        center: new daum.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+      };  
+      var map = new daum.maps.Map(mapContainer, mapOption); //지도 생성 및 객체 리턴
+      // 주소-좌표 변환 객체를 생성합니다
+      var geocoder = new daum.maps.services.Geocoder();
+
+      // 주소로 좌표를 검색합니다
+      geocoder.addr2coord('#{room.address}', function(status, result) {
+
+          // 정상적으로 검색이 완료됐으면 
+          if (status === daum.maps.services.Status.OK) {
+
+              var coords = new daum.maps.LatLng(result.addr[0].lat, result.addr[0].lng);
+
+              // 결과값으로 받은 위치를 마커로 표시합니다
+              var marker = new daum.maps.Marker({
+                  map: map,
+                  position: coords
+              });
+
+              // 인포윈도우로 장소에 대한 설명을 표시합니다
+              var infowindow = new daum.maps.InfoWindow({
+                  content: '<div style="width:150px;text-align:center;padding:6px 0;">#{room.title}</div>'
+              });
+              infowindow.open(map, marker);
+
+              // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+              map.setCenter(coords);
+          } 
+      });    

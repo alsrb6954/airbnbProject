@@ -10,11 +10,13 @@ block content
         input.form-control(type='email', id='email', name='email', value=user.email)
       .form-group
         label(for='personner') 인원수(최대)
-        input.form-control(type='personner', id='personner', name='personner', value=5)
+        input.form-control(type='text', id='personner', name='personner', value=5)
         label(for='roomsort') 방종류
         input.form-control(type='text', id='roomsort', name='roomsort', value = "개인실") 
         label(for='rate') 비용(1박)
-        input.form-control(type='text', id='rate', name='rate', placeholder='rate')        
+        input.form-control(type='text', id='rate', name='rate', placeholder='ex)10000')
+        label(for='city') 도시
+        input.form-control(type='text', id='city', name='city', placeholder='ex)서울시')                    
       .form-group
         label(for='title') 방이름
         input.form-control(type='text', id='title', name='title', placeholder='title')

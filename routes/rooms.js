@@ -52,13 +52,35 @@ router.get('/:id/new3', function(req, res, next) {
         res.render('rooms/new3', {user: user});
     }); 
 });
+router.get('/:id/profile', function(req, res, next) {
+  Room.findById(req.params.id, function(err, room) {
+    if (err) {
+      return next(err);
+    }
+    User.findOne({email: room.email},function(err, user){
+      if (err) {
+        return next(err);
+      }
+      res.render('users/show', {user: user});
+    });
+  });
+});
 router.get('/:id/edit', function(req, res, next) {
-    Room.findById(req.params.id, function(err, user) {
+    Room.findById(req.params.id, function(err, room) {
         if (err) {
             return next(err);
         }
-        res.render('rooms/edit', {user: user});
+        res.render('rooms/edit', {room: room});
     }); 
+});
+router.post('/search', function(req, res, next) {
+    Room.find({city: req.body.search}, function(err, rooms){
+        if (err) {
+            return next(err);
+        }
+        console.log(req.body.search)
+        res.render('rooms/index', {rooms: rooms});
+    });
 });
 router.get('/:id', function (req, res, next) {
     Room.findById(req.params.id, function (err, room) {
@@ -91,11 +113,11 @@ router.get('/:id/host', function (req, res, next) {
     });
 });
 router.post('/', function(req, res, next) {
-  Room.findOne({title: req.body.title}, function(err, user) {
+  Room.findOne({title: req.body.title}, function(err, room) {
     if (err) {
       return next(err);
     }
-    if (user) {
+    if (room) {
       req.flash('danger', '동일한 방이름이 있습니다.');
       res.redirect('back');
     }
@@ -103,6 +125,7 @@ router.post('/', function(req, res, next) {
       email: req.body.email,
       personner: req.body.personner,
       postcode: req.body.postcode,
+      city: req.body.city,
       address: req.body.address,
       address2: req.body.address2,
       rate: req.body.rate,
@@ -124,15 +147,15 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-  Room.findById({_id: req.params.id}, function(err, user) {
+  Room.findById({_id: req.params.id}, function(err, room) {
     if (err) {
       return next(err);
     }
-    user.content = req.body.content;
-    user.personner = req.body.personner;
-    user.city = req.body.city;
-    user.rate = req.body.rate;
-    user.save(function(err) {
+    room.content = req.body.content;
+    room.personner = req.body.personner;
+    room.city = req.body.city;
+    room.rate = req.body.rate;
+    room.save(function(err) {
       if (err) {
         return next(err);
       }

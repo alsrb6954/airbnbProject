@@ -3,6 +3,15 @@ extends ../layout
 block content
   .container
     h1.page-header Room List
+      a(href='/rooms/lists') (전체보기)
+    form(action="/rooms/search", method='POST')
+      .row
+        .col-lg-6
+          .input-group
+            input(type="text",name='search',id='search', class="form-control" placeholder="ex)서울시")
+            span.input-group-btn
+              button.btn.btn-default(type="submit" ) Search
+    br
     .row
       each room in rooms
         .col-sm-4.col-md-3
@@ -10,7 +19,7 @@ block content
             img(src='/images/hosting1.PNG')
             .caption
               h2.Thumbnail ￦ #{room.rate} /(1박)
-              h3.Thumbnail= room.title
+              h3.Thumbnail #{room.title} (#{room.city})
               h4.Thumbnail= room.roomsort
               p
                 span= room.reservation
@@ -51,4 +60,5 @@ block content
     //-     }
     //-     return false;
     //-   });
+
             
