@@ -8,7 +8,7 @@ router.get('/:id', function(req, res, next) {
   if (req.user) {
   } else {
       req.flash('danger', '로그인이 필요합니다.');
-      res.redirect('/signin');
+      return res.redirect('/signin');
   }
   User.findById(req.user, function(err, user) {
     if (err) {
@@ -141,10 +141,10 @@ router.post('/:id', function(req, res, next) {
       if (err) {
         return next(err);
       }
-      // if(room.personner < req.body.personner){
-      //   req.flash('danger', '최대 인원을 넘었습니다.');
-      //   res.redirect('back');
-      // }
+      if(room.personner < req.body.personner){
+        req.flash('danger', '최대 인원을 넘었습니다.');
+        return res.redirect('back');
+      }
       room.reservation = "예약진행중";
       room.save(function(err) {
         if (err) {

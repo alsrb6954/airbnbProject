@@ -15,6 +15,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var rooms = require('./routes/rooms');
 var books = require('./routes/books');
+var reviews = require('./routes/reviews');
 var routeAuth = require('./routes/auth');
 
 var app = express();
@@ -65,6 +66,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/rooms', rooms);
 app.use('/books', books);
+app.use('/reviews', reviews);
 routeAuth(app, passport);
 
 // catch 404 and forward to error handler

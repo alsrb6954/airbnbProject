@@ -1,5 +1,8 @@
 var express = require('express'),
     User = require('../models/User');
+    Room = require('../models/Room');
+    Opinion = require('../models/Opinion');
+    Book = require('../models/Book');
 var router = express.Router();
 
 function validateForm(form, options) {
@@ -89,23 +92,113 @@ router.put('/:id/auth/', function(req,res,next){
 
 
 router.delete('/:id', function(req, res, next) {
-  User.findOneAndRemove({_id: req.params.id}, function(err) {
+  User.findById({_id: req.params.id}, function(err, user){
     if (err) {
       return next(err);
     }
+    Room.find({email:user.email}, function(err, rooms){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.find({hostEmail: user.email}, function(err,book1){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.find({bookEmail: user.email}, function(err,book2){
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.find({email: user.email}, function(err,opinion){
+      if (err) {
+        return next(err);
+      }
+    });
+    User.findOneAndRemove({_id: req.params.id}, function(err) {
+    if (err) {
+      return next(err);
+    }
+    Room.remove({email:user.email}, function(err, rooms){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.remove({hostEmail: user.email}, function(err,book1){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.remove({bookEmail: user.email}, function(err,book2){
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.remove({email: user.email}, function(err,opinion){
+      if (err) {
+        return next(err);
+      }
+    });
     req.flash('success', '사용자 계정이 삭제되었습니다.');
     res.redirect('/users');
+  });
   });
 });
 
 router.delete('/show/:id', function(req, res, next) {
-  User.findOneAndRemove({_id: req.params.id}, function(err) {
+  User.findById({_id: req.params.id}, function(err, user){
     if (err) {
       return next(err);
     }
+    Room.find({email:user.email}, function(err, rooms){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.find({hostEmail: user.email}, function(err,book1){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.find({bookEmail: user.email}, function(err,book2){
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.find({email: user.email}, function(err,opinion){
+      if (err) {
+        return next(err);
+      }
+    });
+    User.remove({_id: req.params.id}, function(err) {
+    if (err) {
+      return next(err);
+    }
+    Room.remove({email:user.email}, function(err, rooms){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.remove({hostEmail: user.email}, function(err,book1){
+      if (err) {
+        return next(err);
+      }
+    });
+    Book.remove({bookEmail: user.email}, function(err,book2){
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.remove({email: user.email}, function(err,opinion){
+      if (err) {
+        return next(err);
+      }
+    });
     delete req.session.user;
     req.flash('success', '사용자 계정이 삭제되었습니다.');
     res.redirect('/');
+  });
   });
 });
 
@@ -169,7 +262,7 @@ router.post('/', function(req, res, next) {
     }
     if (user) {
       req.flash('danger', '동일한 이메일 주소가 이미 존재합니다.');
-      res.redirect('back');
+      return res.redirect('back');
     }
     var newUser = new User({
       name: req.body.name,

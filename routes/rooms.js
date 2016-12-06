@@ -1,7 +1,17 @@
 var express = require('express'),
     User = require('../models/User');
     Room = require('../models/Room');
+    Opinion = require('../models/Opinion');
 var router = express.Router();
+
+function needAuth(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    req.flash('danger', '로그인이 필요합니다.');
+    return res.redirect('/signin');
+  }
+}
 
 router.get('/lists/', function(req, res, next) {
   Room.find({}, function(err, rooms) {
@@ -11,21 +21,7 @@ router.get('/lists/', function(req, res, next) {
     res.render('rooms/index', {rooms: rooms});
   });
 });
-router.get('/new', function(req, res, next) {
-    if (req.session.user) {
-      next();
-    } else {
-      req.flash('danger', '로그인이 필요합니다.');
-      res.redirect('/signin');
-    }
-});
-router.get('/hosting', function(req, res, next) {
-    if (req.user) {
-      next();
-    } else {
-      req.flash('danger', '로그인이 필요합니다.');
-      res.redirect('/signin');
-    }
+router.get('/hosting', needAuth, function(req, res, next) {
     res.render('rooms/hosting');
 });
 router.get('/:id/new1', function(req, res, next) {
@@ -73,15 +69,7 @@ router.get('/:id/edit', function(req, res, next) {
         res.render('rooms/edit', {room: room});
     }); 
 });
-router.post('/search', function(req, res, next) {
-    Room.find({city: req.body.search}, function(err, rooms){
-        if (err) {
-            return next(err);
-        }
-        console.log(req.body.search)
-        res.render('rooms/index', {rooms: rooms});
-    });
-});
+
 router.get('/:id', function (req, res, next) {
     Room.findById(req.params.id, function (err, room) {
         if (err) {
@@ -93,7 +81,12 @@ router.get('/:id', function (req, res, next) {
                 return next(err);
             }    
         });
-        res.render('rooms/show', { room: room });
+        Opinion.find({title: room.title}, function(err,opinions){
+            if(err){
+                return next(err);
+            }    
+            res.render('rooms/show', { room: room, opinions: opinions }); 
+          });
     });
 });
 router.get('/:id/host', function (req, res, next) {
@@ -107,9 +100,51 @@ router.get('/:id/host', function (req, res, next) {
             if(err){
                 return next(err);
             }    
+          });
+          Opinion.find({title: room.title}, function(err,opinions){
+            if(err){
+                return next(err);
+            }    
+            res.render('rooms/show', { room: room, opinions: opinions }); 
+          });
         });
-        res.render('rooms/show', { room: room });
-        });
+    });
+});
+router.post('/:id/opinion', needAuth, function(req, res, next) {
+  Room.findById(req.params.id, function(err, room){
+    if (err) {
+      return next(err);
+    }
+    if(!req.body.content){
+      req.flash('danger', '댓글을 입력해주시기 바랍니다.'); 
+      return res.redirect('back'); 
+    }
+    var newOpinion = new Opinion({
+      name: req.user.name,
+      email: req.user.email,
+      title: room.title,
+      content: req.body.content
+    });
+    newOpinion.save(function(err) {
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.find({title: room.title}, function(err,opinions){
+      if (err) {
+        return next(err);
+      }
+      req.flash('success', '댓글이 등록되었습니다.'); 
+      res.redirect('back');  
+    });
+  });
+});
+router.post('/search', function(req, res, next) {
+    Room.find({city: req.body.search}, function(err, rooms){
+        if (err) {
+            return next(err);
+        }
+        res.render('rooms/index', {rooms: rooms});
     });
 });
 router.post('/', function(req, res, next) {
@@ -119,8 +154,12 @@ router.post('/', function(req, res, next) {
     }
     if (room) {
       req.flash('danger', '동일한 방이름이 있습니다.');
-      res.redirect('back');
+      return res.redirect('back');
     }
+    // if (req.body.rate == Number || req.body.personner == Number){
+    //   req.flash('danger', '비용과 인원 수를 숫자로 입력해주시기 바랍니다.');
+    //   return res.redirect('back');
+    // }
     var newRoom = new Room({
       email: req.body.email,
       personner: req.body.personner,
@@ -172,6 +211,15 @@ router.delete('/:id', function(req, res, next) {
     }
     req.flash('success', '등록된 숙소가 삭제되었습니다.');
     res.redirect('/rooms/lists');
+  });
+});
+router.delete('/:id/opinion', function(req, res, next) {
+  Opinion.findOneAndRemove({_id: req.params.id}, function(err) {
+    if (err) {
+      return next(err);
+    }
+    req.flash('success', '댓글을 삭제했습니다.');
+    res.redirect('back');
   });
 });
 
