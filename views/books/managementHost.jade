@@ -32,7 +32,7 @@ block content
               td
                 a.btn.btn-xs.btn-default(href='/rooms/#{room.id}/edit') 수정
                 | 
-                a.btn.btn-xs.btn-default(data-id=room.id, class='delete') 삭제
+                a.btn.btn-xs.btn-default(href='/rooms/#{room.id}?_method=DELETE') 삭제
 
     h2.page-header 예약진행중
     table.table.table-bordered
@@ -64,6 +64,8 @@ block content
                     a.btn.btn-xs.btn-default(href='/books/#{room.id}/accept?_method=PUT') 수락하기
                     | 
                     a.btn.btn-xs.btn-default(href='/books/#{room.id}/refuse?_method=PUT') 거절하기
+                    | 
+                    a.btn.btn-xs.btn-default(href='/rooms/#{room.id}?_method=DELETE') 삭제
           
     h2.page-header 예약완료
     table.table.table-bordered
@@ -92,4 +94,14 @@ block content
                   td= room.read
                   td
                     a.btn.btn-xs.btn-default(href='/books/#{room.id}/refuse?_method=PUT') 취소하기
+                    | 
+                    a.btn.btn-xs.btn-default(href='/rooms/#{room.id}?_method=DELETE') 삭제
   
+    script(type='text/javascript').
+      $(".delete").click(function(e) {
+        var id = $(e.currentTarget).data('id');
+        if (confirm('정말 삭제하시겠습니까?')) {
+          $("#deleteForm").attr('action', "/rooms/" + id + "?_method=DELETE").submit();          
+        }
+        return false;
+      });

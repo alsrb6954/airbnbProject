@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header= review.title
+    p
+      b 작성인: 
+        a(href='/reviews/#{review._id}/profile')=review.email
+      | 
+      | (조회수 #{review.read})
+    h3.Thumbnail 후기
+    p.well(style='white-space:pre;')= review.content
+    form(action = "/reviews/#{review._id}/opinion", method='POST')
+      .form-group      
+        label(for='content') 댓글
+        textarea.form-control(id='content', rows='2', name='content', placeholder='댓글')
+      div.form-actions
+        button.btn.btn-primary(type='submit', id='add') 등록
+    br
+    each opinion in opinions
+      table.table.table-condensed
+          tr
+            td 닉네임: #{opinion.name}
+              if(!currentUser)
+              else if(currentUser.email == opinion.email) 
+                a(id="del", href="/reviews/#{opinion._id}/opinion?_method=DELETE") 삭제
+          tr
+            td= opinion.content
+    div.form-actions
+        a.btn.btn-default(href='javascript:window.history.back();') 뒤로 

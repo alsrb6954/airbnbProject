@@ -2,6 +2,7 @@ var express = require('express'),
     User = require('../models/User');
     Room = require('../models/Room');
     Opinion = require('../models/Opinion');
+    Review = require('../models/Review');
 var router = express.Router();
 
 function needAuth(req, res, next) {
@@ -81,7 +82,7 @@ router.get('/:id', function (req, res, next) {
                 return next(err);
             }    
         });
-        Opinion.find({title: room.title}, function(err,opinions){
+        Opinion.find({content_id: req.params.id}, function(err,opinions){
             if(err){
                 return next(err);
             }    
@@ -111,33 +112,23 @@ router.get('/:id/host', function (req, res, next) {
     });
 });
 router.post('/:id/opinion', needAuth, function(req, res, next) {
-  Room.findById(req.params.id, function(err, room){
+  if(!req.body.content){
+    req.flash('danger', '댓글을 입력해주시기 바랍니다.'); 
+    return res.redirect('back'); 
+  }
+  var newOpinion = new Opinion({
+    name: req.user.name,
+    email: req.user.email,
+    content_id: req.params.id,
+    content: req.body.content
+  });
+  newOpinion.save(function(err) {
     if (err) {
       return next(err);
     }
-    if(!req.body.content){
-      req.flash('danger', '댓글을 입력해주시기 바랍니다.'); 
-      return res.redirect('back'); 
-    }
-    var newOpinion = new Opinion({
-      name: req.user.name,
-      email: req.user.email,
-      title: room.title,
-      content: req.body.content
-    });
-    newOpinion.save(function(err) {
-      if (err) {
-        return next(err);
-      }
-    });
-    Opinion.find({title: room.title}, function(err,opinions){
-      if (err) {
-        return next(err);
-      }
-      req.flash('success', '댓글이 등록되었습니다.'); 
-      res.redirect('back');  
-    });
   });
+  req.flash('success', '댓글이 등록되었습니다.'); 
+  res.redirect('back');  
 });
 router.post('/search', function(req, res, next) {
     Room.find({city: req.body.search}, function(err, rooms){
@@ -180,7 +171,7 @@ router.post('/', function(req, res, next) {
         return next(err);
       }
       req.flash('success', '방이 등록되었습니다.');
-      res.redirect('/');
+      res.redirect('/rooms/lists');
     });
   });
 });
@@ -205,13 +196,34 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next) {
-  Room.findOneAndRemove({_id: req.params.id}, function(err) {
+  Room.findById(req.params.id,function(err,room){
     if (err) {
       return next(err);
     }
-    req.flash('success', '등록된 숙소가 삭제되었습니다.');
-    res.redirect('/rooms/lists');
+    Book.findOneAndRemove({title: room.title},function(err){
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.remove({content_id: room._id}, function(err){
+      if (err) {
+        return next(err);
+      }
+    });
+    Review.remove({room_id: room._id}, function(err){
+      if (err) {
+        return next(err);
+      }
+    });
+    Room.findOneAndRemove({_id: req.params.id}, function(err) {
+      if (err) {
+        return next(err);
+      }
+      req.flash('success', '등록된 숙소가 삭제되었습니다.');
+      res.redirect('back');
+    });
   });
+
 });
 router.delete('/:id/opinion', function(req, res, next) {
   Opinion.findOneAndRemove({_id: req.params.id}, function(err) {

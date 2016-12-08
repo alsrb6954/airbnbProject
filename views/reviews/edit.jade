@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header 후기 수정
+    form(action =  "/reviews/#{review.id}?_method=PUT" , method='POST')
+        .row
+            .form-group.col-xs-4
+                label(for='email') email
+                input.form-control(type='email', id='email', name='email', value=review.email)
+            .form-group.col-xs-4
+                label(for='password') password
+                input.form-control(type='password', id='password', name='password', placeholder='password')       
+        .form-group
+            label(for='title') 제목
+            input.form-control(type='text', id='title', name='title', value=review.title)     
+        .form-group      
+            label(for='content') 후기
+            textarea.form-control(id='content', rows='10', name='content')=review.content
+        div.form-actions
+        a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
+        | 
+        button.btn.btn-primary(type='submit') 등록
+      

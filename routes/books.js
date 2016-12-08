@@ -4,6 +4,19 @@ var express = require('express'),
     Book = require('../models/Book');
 var router = express.Router();
 
+function diff(value1,value2){
+  var fromDate = value1.split('/');
+  var toDate = value2.split('/');
+
+  var dt1 = new Date(fromDate[2],fromDate[0],fromDate[1]);
+  var dt2 = new Date(toDate[2],toDate[0],toDate[1]);
+
+  var diff = dt2 - dt1;
+  var day = 1000 * 60 * 60 * 24;
+
+  return parseInt(diff/day);
+}
+
 router.get('/:id', function(req, res, next) {
   if (req.user) {
   } else {
@@ -151,6 +164,7 @@ router.post('/:id', function(req, res, next) {
           return next(err);
         }
       });
+      var rateDate = diff(req.body.fromDate,req.body.toDate);
       var newBook = new Book({
         bookEmail: req.body.bookEmail,
         hostEmail: req.body.hostEmail,
@@ -160,9 +174,9 @@ router.post('/:id', function(req, res, next) {
         address: user.address + user.address2,
         fromDate: req.body.fromDate,
         toDate: req.body.toDate,
+        rate: rateDate*room.rate,
         personner: req.body.personner,
       });
-      
       newBook.save(function(err) {
         if (err) {
           return next(err);
