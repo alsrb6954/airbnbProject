@@ -4,7 +4,7 @@ block content
   .container
     h1.page-header 집 전체 등록
 
-    form(action = "/rooms", method='POST')
+    form(action = "/rooms", method='POST', enctype="multipart/form-data")
       .form-group
         label(for='email') Email address
         input.form-control(type='email', id='email', name='email', value=user.email)
@@ -33,6 +33,15 @@ block content
       .form-group      
         label(for='content2') 이용규칙
         textarea.form-control(id='content2', rows='5', name='content2', placeholder='content here')
+      .form-group
+        label(for='images') 이미지 
+        input.form-control(type="file", name='photos')
+      .form-group
+        label(for='images') 이미지 
+        input.form-control(type="file", name='photos')
+      .form-group
+        label(for='images') 이미지 
+        input.form-control(type="file", name='photos')               
       div.form-actions
         a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
         | 

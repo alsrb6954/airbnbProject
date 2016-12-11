@@ -5,6 +5,32 @@ var express = require('express'),
     Review = require('../models/Review');
 var router = express.Router();
 
+function validateForm(form, options) {
+  var title = form.title || "";
+  var email = form.email || "";
+  var content = form.content || "";
+  title = title.trim();
+  email = email.trim();
+  content = content.trim();
+
+  if (!title) {
+    return '제목을 입력해주세요.';
+  }
+  if (!email) {
+    return '이메일을 입력해주세요.';
+  }
+  if (!content) {
+    return '상세내용을 입력해주세요.';
+  }
+  if (!form.password && options.needPassword) {
+    return '비밀번호를 입력해주세요.';
+  }
+  if (form.password.length < 6) {
+    return '비밀번호는 6글자 이상이어야 합니다.';
+  }
+  return null;
+}
+
 router.get('/:id', function(req, res, next) {
   Room.findById(req.params.id, function(err, room){  
     Review.find({room_id: room.id}, function(err, reviews){
@@ -102,6 +128,11 @@ router.post('/:id/opinion', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
+  var err = validateForm(req.body,{needPassword: true});
+  if (err) {
+    req.flash('danger', err);
+    return res.redirect('back');
+  }
   Review.findById({_id: req.params.id}, function(err, review) {
     if (err) {
       return next(err);
@@ -124,6 +155,11 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.post('/:id', function(req, res, next) {
+  var err = validateForm(req.body, {needPassword: true});
+  if (err) {
+    req.flash('danger', err);
+    return res.redirect('back');
+  }
   Room.findById(req.params.id, function(err, room) {
     if (err) {
       return next(err);

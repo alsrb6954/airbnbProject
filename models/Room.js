@@ -6,6 +6,7 @@ var schema = new Schema({
   title:{type: String, unique: true, required: true},
   content:{type: String, required: true},
   content2:{type: String, required: true},
+  images: [String],  
   city:{type: String, required: true},
   address: {type: String, required: true},
   address2: {type: String, required: true},

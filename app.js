@@ -39,7 +39,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(methodOverride('_method', {methods: ['POST', 'GET']}));
-
+app.use(express.static(path.join(__dirname, 'public')));
+var MongoStore = require('connect-mongo')(session);
+app.sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -54,7 +56,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
-  console.log("REQ USER", req.user);
   res.locals.currentUser = req.user;
   res.locals.flashMessages = req.flash();
   next();

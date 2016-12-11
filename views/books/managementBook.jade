@@ -14,6 +14,7 @@ block content
           th 숙박기간
           th 신청인원
           th 신청날짜
+          th
       tbody
         each book in books
           tr
@@ -26,5 +27,7 @@ block content
             td #{moment(book.fromDate).format('YYYY-MM-DD')} ~ #{moment(book.toDate).format('YYYY-MM-DD')} 
             td= book.personner
             td= moment(book.createdAt).format('YYYY-MM-DD HH:mm:ss')
+            td
+              a.btn.btn-xs.btn-default(href='/books/#{book.id}/cancel?_method=PUT') 취소요청
     
   

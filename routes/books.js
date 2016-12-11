@@ -16,7 +16,40 @@ function diff(value1,value2){
 
   return parseInt(diff/day);
 }
+function validateForm(form) {
+  var hostEmail = form.hostEmail || "";
+  var bookEmail = form.bookEmail || "";
+  var name = form.name || "";
+  var fromDate = form.fromDate || "";
+  var toDate = form.toDate || "";
+  var personner = form.personner || "";
+  hostEmail = hostEmail.trim();
+  bookEmail = bookEmail.trim();
+  name = name.trim();
+  fromDate = fromDate.trim();
+  toDate = toDate.trim();
+  personner = personner.trim();
 
+  if (!hostEmail) {
+    return '호스트 이메일을 입력해주세요.';
+  }
+  if (!bookEmail) {
+    return '예약자 이메일을 입력해주세요.';
+  }
+  if (!fromDate) {
+    return '체크아웃 날짜을 입력해주세요.';
+  }
+  if (!toDate) {
+    return '체크인 날짜을 입력해주세요.';
+  }
+  if (!personner) {
+    return '인원을 입력해주세요.';
+  }
+  if (!name) {
+    return '이름을 입력해주세요.';
+  }
+  return null;
+}
 router.get('/:id', function(req, res, next) {
   if (req.user) {
   } else {
@@ -123,11 +156,45 @@ router.put('/:id/accept', function(req,res,next){
 
 router.put('/:id/refuse', function(req,res,next){
   Room.findById({_id: req.params.id}, function(err, room){
-     if (err) {
+    if (err) {
       return next(err);
     }
     Book.findOneAndRemove({title: room.title}, function(err, book){
       room.reservation ="예약가능";
+      room.save(function(err) {
+        if (err) {
+          return next(err);
+        }
+        req.flash('success', '예약을 거절 했습니다');
+        res.redirect('back');
+      });
+    });
+  });
+});
+router.put('/:id/cancel/accept', function(req,res,next){
+  Room.findById({_id: req.params.id}, function(err, room){
+    if (err) {
+      return next(err);
+    }
+    Book.findOneAndRemove({title: room.title}, function(err, book){
+      room.reservation ="예약가능";
+      room.save(function(err) {
+        if (err) {
+          return next(err);
+        }
+        req.flash('success', '취소요청을 수락했습니다');
+        res.redirect('back');
+      });
+    });
+  });
+});
+router.put('/:id/cancel/refuse', function(req,res,next){
+  Room.findById({_id: req.params.id}, function(err, room){
+    if (err) {
+      return next(err);
+    }
+    Book.findOne({title: room.title}, function(err, book){
+      room.reservation ="예약완료";
       book.reservation = room.reservation;
       room.save(function(err) {
         if (err) {
@@ -137,15 +204,42 @@ router.put('/:id/refuse', function(req,res,next){
           if (err) {
             return next(err);
           }
-          req.flash('success', '예약을 거절 했습니다');
+          req.flash('success', '취소요청을 거절 했습니다');
           res.redirect('back');
         });
       });
     });
   });
 });
-
+router.put('/:id/cancel', function(req,res,next){
+  Book.findById({_id: req.params.id}, function(err, book){
+    if (err) {
+      return next(err);
+    }
+    Room.findOne({title: book.title}, function(err, room){
+      room.reservation ="취소요청중";
+      book.reservation = room.reservation;
+      room.save(function(err) {
+        if (err) {
+          return next(err);
+        }
+        book.save(function(err) {
+          if (err) {
+            return next(err);
+          }
+          req.flash('success', '취소 요청을 신청했습니다.');
+          res.redirect('back');
+        });
+      });
+    });
+  });
+});
 router.post('/:id', function(req, res, next) {
+  var err = validateForm(req.body);
+  if (err) {
+    req.flash('danger', err);
+    return res.redirect('back');
+  }
   Room.findById(req.params.id, function(err, room) {
     if (err) {
       return next(err);

@@ -96,6 +96,36 @@ block content
                     a.btn.btn-xs.btn-default(href='/books/#{room.id}/refuse?_method=PUT') 취소하기
                     | 
                     a.btn.btn-xs.btn-default(href='/rooms/#{room.id}?_method=DELETE') 삭제
+
+    h2.page-header 취소요청
+    table.table.table-bordered
+          thead
+            tr
+              th 도시
+              th 방이름
+              th 숙소 인원(최대)
+              th 가격(1박)
+              th 예약상태
+              th 등록시간
+              th 조회수
+              th 
+          tbody
+            each room in rooms
+              if (room.reservation == "취소요청중")
+                tr
+                  td= room.address
+                  td
+                    a(href='/rooms/#{room.id}')= room.title
+                  td= room.personner
+                  td= room.rate
+                  td 
+                    span= room.reservation
+                  td= moment(room.createdAt).format('YYYY-MM-DD HH:mm:ss')
+                  td= room.read
+                  td
+                    a.btn.btn-xs.btn-default(href='/books/#{room.id}/cancel/accept?_method=PUT') 수락하기
+                    | 
+                    a.btn.btn-xs.btn-default(href='/books/#{room.id}/cancel/refuse?_method=PUT') 거절하기
   
     script(type='text/javascript').
       $(".delete").click(function(e) {

@@ -3,6 +3,8 @@ extends ../layout
 block content
   .container
     h1.page-header= room.title
+    img.img-rounded.img-responsive(src=room.images[0])
+    br
     .row
       .col-md-6 
         p

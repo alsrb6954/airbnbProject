@@ -9,17 +9,30 @@ var router = express.Router();
 function validateForm(form, options) {
   var name = form.name || "";
   var email = form.email || "";
+  var address = form.address || "";
+  var address2 = form.address2 || "";
+  var postcode = form.postcode || "";
   name = name.trim();
   email = email.trim();
+  address = address.trim();
+  address2 = address2.trim();
+  postcode = postcode.trim();
 
   if (!name) {
     return '이름을 입력해주세요.';
   }
-
   if (!email) {
     return '이메일을 입력해주세요.';
   }
-
+  if (!address) {
+    return '주소을 입력해주세요.';
+  }
+  if (!address2) {
+    return '상세주소을 입력해주세요.';
+  }  
+  if (!postcode) {
+    return '우편번호을 입력해주세요.';
+  }  
   if (!form.password && options.needPassword) {
     return '비밀번호를 입력해주세요.';
   }
@@ -183,7 +196,7 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-  var err = validateForm(req.body);
+  var err = validateForm(req.body, {needPassword: true});
   if (err) {
     req.flash('danger', err);
     return res.redirect('back');

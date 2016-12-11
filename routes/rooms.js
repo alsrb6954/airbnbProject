@@ -1,9 +1,19 @@
 var express = require('express'),
+    multer  = require('multer'),
+    path = require('path'),
+    _ = require('lodash'),
+    fs = require('fs'),
+    upload = multer({ dest: 'tmp' }),
     User = require('../models/User');
     Room = require('../models/Room');
     Opinion = require('../models/Opinion');
     Review = require('../models/Review');
 var router = express.Router();
+var mimetypes = {
+  "image/jpeg": "jpg",
+  "image/gif": "gif",
+  "image/png": "png"
+};
 
 function needAuth(req, res, next) {
   if (req.user) {
@@ -12,6 +22,65 @@ function needAuth(req, res, next) {
     req.flash('danger', '로그인이 필요합니다.');
     return res.redirect('/signin');
   }
+}
+function validateForm(form) {
+  var title = form.title || "";
+  var email = form.email || "";
+  var content = form.content || "";
+  var content2 = form.content2 || "";
+  var city = form.city || "";
+  var rate = form.rate || "";
+  var roomsort = form.roomsort || "";
+  var personner = form.personner || "";          
+  var address = form.address || "";
+  var address2 = form.address2 || "";
+  var postcode = form.postcode || "";
+  title = title.trim();
+  email = email.trim();
+  content = content.trim();
+  content2 = content2.trim();
+  city = city.trim();
+  rate = rate.trim();
+  roomsort = roomsort.trim();
+  personner = personner.trim();
+  address = address.trim();
+  address2 = address2.trim();
+  postcode = postcode.trim();
+
+  if (!title) {
+    return '제목을 입력해주세요.';
+  }
+  if (!email) {
+    return '이메일을 입력해주세요.';
+  }
+  if (!content) {
+    return '상세내용을 입력해주세요.';
+  }
+  if (!content2) {
+    return '이용규칙을 입력해주세요.';
+  }
+  if (!city) {
+    return '도시을 입력해주세요.';
+  }
+  if (!rate) {
+    return '비용을 입력해주세요.';
+  }
+  if (!roomsort) {
+    return '방종류을 입력해주세요.';
+  }
+  if (!personner) {
+    return '인원수을 입력해주세요.';
+  }            
+  if (!address) {
+    return '주소을 입력해주세요.';
+  }
+  if (!address2) {
+    return '상세주소을 입력해주세요.';
+  }  
+  if (!postcode) {
+    return '우편번호을 입력해주세요.';
+  }  
+  return null;
 }
 
 router.get('/lists/', function(req, res, next) {
@@ -138,7 +207,12 @@ router.post('/search', function(req, res, next) {
         res.render('rooms/index', {rooms: rooms});
     });
 });
-router.post('/', function(req, res, next) {
+router.post('/', upload.array('photos'), function(req, res, next) {
+  var err = validateForm(req.body);
+  if (err) {
+    req.flash('danger', err);
+    return res.redirect('back');
+  }
   Room.findOne({title: req.body.title}, function(err, room) {
     if (err) {
       return next(err);
@@ -147,10 +221,20 @@ router.post('/', function(req, res, next) {
       req.flash('danger', '동일한 방이름이 있습니다.');
       return res.redirect('back');
     }
-    // if (req.body.rate == Number || req.body.personner == Number){
-    //   req.flash('danger', '비용과 인원 수를 숫자로 입력해주시기 바랍니다.');
-    //   return res.redirect('back');
-    // }
+    var dest = path.join(__dirname, '../public/images/');
+    var images = [];
+    if (req.files && req.files.length > 0) {
+    console.log("gg")
+      _.each(req.files, function(file) {
+        var ext = mimetypes[file.mimetype];
+        if (!ext) {
+          return;
+        }
+        var filename = file.filename + "." + ext;
+        fs.renameSync(file.path, dest + filename);
+        images.push("/images/" + filename);
+      });
+    }
     var newRoom = new Room({
       email: req.body.email,
       personner: req.body.personner,
@@ -163,6 +247,7 @@ router.post('/', function(req, res, next) {
       content: req.body.content,
       content2: req.body.content2,
       roomsort: req.body.roomsort,
+      images: images,
       reservation: "예약가능",
     });
 
@@ -177,13 +262,23 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
+  var err = validateForm(req.body);
+  if (err) {
+    req.flash('danger', err);
+    return res.redirect('back');
+  }
   Room.findById({_id: req.params.id}, function(err, room) {
     if (err) {
       return next(err);
     }
     room.content = req.body.content;
+    room.content2 = req.body.content2;
     room.personner = req.body.personner;
+    room.roomsort = req.body.roomsort;
     room.city = req.body.city;
+    room.postcode = req.body.postcode;
+    room.address = req.body.address;
+    room.address2 = req.body.address2;
     room.rate = req.body.rate;
     room.save(function(err) {
       if (err) {
