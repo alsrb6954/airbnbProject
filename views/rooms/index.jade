@@ -14,9 +14,9 @@ block content
     br
     .row
       each room in rooms
-        .col-sm-4.col-md-3
+        .col-sm-6.col-md-3
           .thumbnail
-            img(src=room.images[0])
+            img(src='/images/room1.jpg')
             .caption
               h2.Thumbnail ￦ #{room.rate} /(1박)
               h3.Thumbnail #{room.title} (#{room.city})

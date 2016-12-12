@@ -3,7 +3,18 @@ extends ../layout
 block content
   .container
     h1.page-header= room.title
-    img.img-rounded.img-responsive(src=room.images[0])
+    .backimg
+      br
+      .slideshow
+        img.img-rounded.img-responsive.active(src=room.images[0] alt='사진없음')
+        img.img-rounded.img-responsive(src=room.images[1] alt='사진없음')
+        img.img-rounded.img-responsive(src=room.images[2] alt='사진없음')
+      .indicator
+        ul
+          li.active
+          li
+          li
+        br  
     br
     .row
       .col-md-6 
@@ -76,6 +87,28 @@ block content
               map.setCenter(coords);
           } 
       }); 
+
+      var i = 1;
+      $(function(){
+          setInterval( function(){
+              $('.slideshow img').removeClass('active');
+              $('.indicator ul li').removeClass('active');
+              i++;
+              $('.slideshow img:nth-child(' + i + ')' ).addClass('active');
+              $('.indicator ul li:nth-child(' + i + ')').addClass('active');
+              if(i>=3){
+                i = 0;
+              }
+        },3000)
+      });
+      $(".indicator ul li").click(function() {
+          var index = $(".indicator ul li").index( this ) + 1;
+          $('.slideshow img').removeClass('active');
+          $('.indicator ul li').removeClass('active');
+          $('.slideshow img:nth-child(' + index + ')' ).addClass('active');
+          $('.indicator ul li:nth-child(' + index + ')').addClass('active');
+          i  = index;
+      });      
 
 
         

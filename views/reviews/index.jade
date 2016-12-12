@@ -27,7 +27,7 @@ block content
               else if (currentUser.email == review.email)
                 a.btn.btn-xs.btn-default(href='/reviews/#{review.id}/edit') 수정
                 | 
-                a.btn.btn-xs.btn-default(href='#') 삭제
+                a.btn.btn-xs.btn-default(href='/reviews/#{review.id}/review?_method=DELETE') 삭제
     a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
     a.btn.btn-primary(href='/reviews/#{room.id}/new') 후기 쓰기
    

@@ -189,6 +189,7 @@ router.post('/:id/opinion', needAuth, function(req, res, next) {
     name: req.user.name,
     email: req.user.email,
     content_id: req.params.id,
+    room_id: req.params.id,
     content: req.body.content
   });
   newOpinion.save(function(err) {
@@ -224,7 +225,6 @@ router.post('/', upload.array('photos'), function(req, res, next) {
     var dest = path.join(__dirname, '../public/images/');
     var images = [];
     if (req.files && req.files.length > 0) {
-    console.log("gg")
       _.each(req.files, function(file) {
         var ext = mimetypes[file.mimetype];
         if (!ext) {
@@ -301,6 +301,11 @@ router.delete('/:id', function(req, res, next) {
       }
     });
     Opinion.remove({content_id: room._id}, function(err){
+      if (err) {
+        return next(err);
+      }
+    });
+    Opinion.remove({room_id: room._id}, function(err){
       if (err) {
         return next(err);
       }

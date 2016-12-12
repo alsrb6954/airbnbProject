@@ -109,6 +109,7 @@ router.post('/:id/opinion', function(req, res, next) {
       name: req.user.name,
       email: req.user.email,
       content_id: req.params.id,
+      room_id: review.room_id,
       content: req.body.content
     });
     newOpinion.save(function(err) {
@@ -183,6 +184,22 @@ router.post('/:id', function(req, res, next) {
     });
   });
 });
+router.delete('/:id/review', function(req, res, next) {
+  Review.findOne({_id: req.params.id}, function(err, review){
+      Opinion.remove({content_id: review._id}, function(err) {
+        if (err) {
+          return next(err);
+        }
+      });
+      Review.findOneAndRemove({_id: req.params.id}, function(err){
+        if (err) {
+          return next(err);
+        }
+      });
+      req.flash('success', '후기를 삭제했습니다.');
+      res.redirect('back');
+    });
+  });
 
 router.delete('/:id/opinion', function(req, res, next) {
   Opinion.findOne({_id: req.params.id}, function(err, opinion){
